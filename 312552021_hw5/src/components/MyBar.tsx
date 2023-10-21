@@ -136,12 +136,8 @@ const MyBar: React.FC<{
         }}
         enableGridX={true}
         enableGridY={false}
-        labelSkipWidth={10}
+        labelSkipWidth={60}
         labelSkipHeight={10}
-        // labelTextColor={{
-        //   from: "color",
-        //   modifiers: [["darker", 1.6]],
-        // }}
         legends={[
           {
             dataFrom: "keys",
