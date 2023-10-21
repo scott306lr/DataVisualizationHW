@@ -7,7 +7,12 @@ import useSWR from "swr";
 import MyBar from "./components/MyBar";
 import { MyInformModal } from "./components/MyInformModal";
 
-import { BsSortDownAlt, BsSortDown } from "react-icons/bs";
+import {
+  BsSortDownAlt,
+  BsSortDown,
+  BsFillUnlockFill,
+  BsFillLockFill,
+} from "react-icons/bs";
 import { Button, Tooltip } from "flowbite-react";
 import MyModal from "./components/MyModal";
 import MySlider from "./components/MySlider";
@@ -47,9 +52,11 @@ function App() {
 
   const [sortingOrder, setSortingOrder] = useState("asc");
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
+  const [staticRange, setStaticRange] = useState(false);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-blue-100">
+      <div className="invisible"></div>
       <CheckBeforeRender isLoading={isLoading} error={error}>
         {data && (
           <div className="h-[50rem] w-[90rem] flex-col place-items-center space-y-2 pb-20">
@@ -57,7 +64,28 @@ function App() {
               <div className="col-start-1 flex flex-grow items-center justify-start space-x-2 pl-6">
                 <Tooltip
                   style="light"
-                  content="Click to change sorting order"
+                  content="Switch between Dynamic/Static Scaling"
+                  arrow={false}
+                  className="text-xl"
+                >
+                  <Button
+                    // gradientDuoTone="cyanToBlue"
+                    color="gray"
+                    className="h-14 w-14 items-center justify-center "
+                    onClick={() =>
+                      setStaticRange(staticRange === true ? false : true)
+                    }
+                  >
+                    {staticRange === true ? (
+                      <BsFillLockFill className="h-12 w-12 p-2" />
+                    ) : (
+                      <BsFillUnlockFill className="h-12 w-12 p-2" />
+                    )}
+                  </Button>
+                </Tooltip>
+                <Tooltip
+                  style="light"
+                  content="Switch between Descending/Ascending Order"
                   arrow={false}
                   className="text-xl"
                 >
@@ -118,7 +146,11 @@ function App() {
                 </h1>
               </div>
             </div>
-            <MyBar data={data} sortOrder={sortingOrder} />
+            <MyBar
+              data={data}
+              sortOrder={sortingOrder}
+              staticRange={staticRange}
+            />
           </div>
         )}
       </CheckBeforeRender>

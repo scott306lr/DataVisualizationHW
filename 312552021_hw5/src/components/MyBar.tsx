@@ -3,10 +3,11 @@ import { UniversityRankingData } from "../utils/dataHandler";
 import { useState } from "react";
 import MySlider from "./MySlider";
 
-const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
-  data,
-  sortOrder,
-}) => {
+const MyBar: React.FC<{
+  data: UniversityRankingData[];
+  sortOrder: string;
+  staticRange: boolean;
+}> = ({ data, sortOrder, staticRange }) => {
   const [sortingKey, setSortingKey] = useState("Total Score");
   const [keyArray, setKeyArray] = useState([
     "Teaching",
@@ -100,6 +101,8 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
         indexBy="Name"
         margin={{ top: 50, right: 250, bottom: 80, left: 430 }}
         padding={0.3}
+        minValue={staticRange ? 0 : "auto"}
+        maxValue={staticRange ? 490 : "auto"}
         layout="horizontal"
         valueScale={{ type: "linear" }}
         indexScale={{ type: "band", round: true }}
