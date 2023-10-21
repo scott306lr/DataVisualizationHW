@@ -48,7 +48,7 @@ function App() {
     error: error,
     isLoading: isLoading,
   } = useSWR(
-    "http://vis.lab.djosix.com:2023/data/abalone.data",
+    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/abalone.data",
     AbaloneDataFetcher,
   ); //"abalone.data"
 

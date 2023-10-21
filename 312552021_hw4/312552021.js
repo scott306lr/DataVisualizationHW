@@ -133,7 +133,7 @@ const spec = {
   "data": [
     {
       "name": "iris",
-      "url": "http://vis.lab.djosix.com:2023/data/iris.csv",
+      "url": "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/iris.csv",
       "format": {"type": "csv", "parse": "auto"},
       "transform": [
         {"type": "filter", "expr": "datum['class'] != null"}

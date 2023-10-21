@@ -9,7 +9,7 @@ import { menu } from './312552021_2.js';
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const csvUrl = 'http://vis.lab.djosix.com:2023/data/iris.csv'
+const csvUrl = 'https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/iris.csv'
 const parseRow = (d) => {
   if (d.class == null || d.class == "") return null
   d['sepal length'] = +d['sepal length'];

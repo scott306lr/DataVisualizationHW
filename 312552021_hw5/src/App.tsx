@@ -40,7 +40,7 @@ function App() {
     error: error,
     isLoading: isLoading,
   } = useSWR(
-    "TIMES_WorldUniversityRankings_2024.csv",
+    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/TIMES_WorldUniversityRankings_2024.csv",
     UniversityRankingFetcher,
   );
 
@@ -125,7 +125,12 @@ function App() {
         size="5xl"
       >
         <div className="flex h-full w-full flex-col items-center justify-center">
-          <img src="howToUse.png" alt="how to use" width={1920} height={1080} />
+          <img
+            src="https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/howToUse.png"
+            alt="how to use"
+            width={1920}
+            height={1080}
+          />
         </div>
       </MyModal>
 
