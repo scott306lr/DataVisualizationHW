@@ -87,16 +87,21 @@ function App() {
                     <p className="text-center text-lg">
                       The{" "}
                       <a
-                        href="https://www.timeshighereducation.com/world-university-rankings/2022/world-ranking#!/page/0/length/25/sort_by/rank/sort_order/asc/cols/stats"
+                        href="https://www.kaggle.com/datasets/ddosad/timesworlduniversityrankings2024"
                         target="_blank"
                         className="font-bold text-blue-500 underline hover:text-blue-700"
                       >
-                        Times Higher Education World University Rankings
+                        Times Higher Education World University Rankings 2024
                       </a>{" "}
-                      use 13 carefully calibrated performance indicators to
-                      provide the most comprehensive and balanced comparisons,
-                      trusted by students, academics, university leaders,
-                      industry and governments.
+                      dataset include{" "}
+                      <strong>
+                        1,904 universities across 108 countries and regions.
+                      </strong>{" "}
+                      The table is based on their new WUR 3.0 methodology, which
+                      includes 18 carefully calibrated performance indicators
+                      that measure an institution’s performance across five
+                      areas: teaching, research environment, research quality,
+                      industry, and international outlook.
                     </p>
                   </div>
                 </MyInformModal>
