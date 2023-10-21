@@ -81,6 +81,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
     //center
     <div className="flex h-full w-full flex-col justify-center rounded-xl border-2 border-gray-500 bg-white">
       <ResponsiveBar
+        animate={false}
         theme={{
           axis: {
             legend: { text: { fontSize: 20 } },
