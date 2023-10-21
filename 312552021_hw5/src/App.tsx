@@ -50,9 +50,9 @@ function App() {
     UniversityRankingFetcher,
   );
 
-  const [sortingOrder, setSortingOrder] = useState("asc");
+  const [sortingOrder, setSortingOrder] = useState("Descend");
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
-  const [staticRange, setStaticRange] = useState(false);
+  const [staticRange, setStaticRange] = useState(true);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-blue-100">

@@ -120,9 +120,9 @@ const MyBar: React.FC<{
           tickSize: 12,
           tickPadding: 5,
           tickRotation: 0,
-          legend: `School ranking sorted by "${sortingKey}" (Rank: ${value} - ${
-            value + window
-          })`,
+          legend: `School ranking sorted by "${sortingKey}"  (${
+            staticRange ? "Static Scaling" : "Dynamic Scaling"
+          })  (Rank: ${value + 1} - ${value + window})`,
           legendPosition: "middle",
           legendOffset: 56,
         }}
