@@ -4,9 +4,14 @@ import MyModal from "./MyModal";
 interface IProps {
   title: string | undefined;
   children: React.ReactNode;
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | undefined;
 }
 
-export const MyInformModal: React.FC<IProps> = ({ title, children }) => {
+export const MyInformModal: React.FC<IProps> = ({
+  title,
+  size = "2xl",
+  children,
+}) => {
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
 
   return (
@@ -22,7 +27,7 @@ export const MyInformModal: React.FC<IProps> = ({ title, children }) => {
         title={title}
         openModal={openModal}
         setOpenModal={setOpenModal}
-        size="2xl"
+        size={size}
       >
         {children}
       </MyModal>

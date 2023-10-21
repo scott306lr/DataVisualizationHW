@@ -10,6 +10,7 @@ import { MyInformModal } from "./components/MyInformModal";
 import { BsSortDownAlt, BsSortDown } from "react-icons/bs";
 import { Button, Tooltip } from "flowbite-react";
 import MyModal from "./components/MyModal";
+import MySlider from "./components/MySlider";
 
 //create component, don't render the passed component if isLoading or error
 const CheckBeforeRender: React.FC<{
@@ -46,8 +47,6 @@ function App() {
 
   const [sortingOrder, setSortingOrder] = useState("asc");
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
-
-  console.log(data && data);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-blue-100">

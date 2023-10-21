@@ -1,13 +1,13 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { UniversityRankingData } from "../utils/dataHandler";
 import { useState } from "react";
+import MySlider from "./MySlider";
 
 const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
   data,
   sortOrder,
 }) => {
-  const [sortingKey, setSortingKey] = useState("Teaching");
-
+  const [sortingKey, setSortingKey] = useState("Total Score");
   const [keyArray, setKeyArray] = useState([
     "Teaching",
     "Research",
@@ -15,17 +15,17 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
     "Industry Income",
     "International",
   ]);
+
+  //slider
+  const window = 20;
+  const [value, setValue] = useState(0);
+  const scroll_min = 0;
+  const scroll_max = data.length - window;
+  const scroll_step = 1;
+  //diverge threshold
+  const scroll_legend = `Ranking Window Slider (Window Size: ${window})`;
+
   const topSortedData = data
-    .map((e) => {
-      return {
-        ...e,
-        "Teaching Color": "#6096B4",
-        "Research Color": "#93BFCF",
-        "Citations Color": "#BDCDD6",
-        "Industry Income Color": "#EEE9DA",
-        "International Color": "#D9E2E5",
-      };
-    })
     .sort((a, b) => {
       if (sortOrder === "Ascend") {
         const aSortingKey = a[sortingKey as keyof typeof a] as number;
@@ -61,12 +61,25 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
         }
       }
     })
-    .slice(0, 30)
+    .slice(value, value + window)
+    .map((e, i) => {
+      return {
+        ...e,
+        Name: `${
+          sortOrder === "Ascend" ? data.length - (value + i + 1) : value + i + 1
+        }. ${e["Name"]}`,
+        "Teaching Color": "#6096B4",
+        "Research Color": "#93BFCF",
+        "Citations Color": "#BDCDD6",
+        "Industry Income Color": "#EEE9DA",
+        "International Color": "#D9E2E5",
+      };
+    })
     .reverse();
 
   return (
     //center
-    <div className="flex h-full w-full justify-center rounded-xl border-2 border-gray-500 bg-white">
+    <div className="flex h-full w-full flex-col justify-center rounded-xl border-2 border-gray-500 bg-white">
       <ResponsiveBar
         theme={{
           axis: {
@@ -84,7 +97,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
         data={topSortedData}
         keys={keyArray}
         indexBy="Name"
-        margin={{ top: 50, right: 200, bottom: 80, left: 380 }}
+        margin={{ top: 50, right: 250, bottom: 80, left: 430 }}
         padding={0.3}
         layout="horizontal"
         valueScale={{ type: "linear" }}
@@ -103,7 +116,9 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
           tickSize: 12,
           tickPadding: 5,
           tickRotation: 0,
-          legend: `Total Score (Showing Top 30 of "${sortingKey}")`,
+          legend: `School ranking sorted by "${sortingKey}" (Rank: ${value} - ${
+            value + window
+          })`,
           legendPosition: "middle",
           legendOffset: 56,
         }}
@@ -129,7 +144,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             anchor: "bottom-right",
             direction: "column",
             justify: false,
-            translateX: 170,
+            translateX: 190,
             translateY: 0,
             itemsSpacing: 5,
             itemWidth: 140,
@@ -167,10 +182,10 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             anchor: "bottom-right",
             direction: "column",
             justify: false,
-            translateX: 172,
-            translateY: 50,
+            translateX: 212,
+            translateY: 35,
             itemsSpacing: 5,
-            itemWidth: 150,
+            itemWidth: 180,
             itemHeight: 20,
             itemDirection: "left-to-right",
             itemOpacity: 0.85,
@@ -186,7 +201,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             data: [
               {
                 id: "A",
-                label: "Sort By Total Score",
+                label: "... or sort by total score",
               },
             ],
             onClick: () => {
@@ -203,7 +218,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             anchor: "bottom-right",
             direction: "column",
             justify: false,
-            translateX: 170,
+            translateX: 190,
             translateY: -128,
             itemsSpacing: 5,
             itemWidth: 150,
@@ -214,7 +229,7 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             data: [
               {
                 id: "A",
-                label: "Click Key to Sort",
+                label: "Sort by key:",
               },
             ],
           },
@@ -246,6 +261,15 @@ const MyBar: React.FC<{ data: UniversityRankingData[]; sortOrder: string }> = ({
             {id} - {data.FullName}: <strong>{value}</strong>
           </div>
         )}
+      />
+      <MySlider
+        legend={scroll_legend}
+        value={value}
+        setValue={setValue}
+        min={scroll_min}
+        max={scroll_max}
+        step={scroll_step}
+        disable={false}
       />
     </div>
   );

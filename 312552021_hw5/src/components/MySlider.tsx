@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import React from "react";
-import MyModal from "./MyInformModal";
+import MyInformModal from "./MyInformModal";
 
 interface IProps {
   legend: string;
@@ -24,19 +24,22 @@ const MySlider: React.FC<IProps> = ({
   disable,
 }) => {
   return (
-    <div className=" flex h-full flex-col justify-center px-24">
+    <div className=" flex flex-col justify-center px-20 pb-12">
       <span className="flex gap-2 text-lg font-bold">
         <h3 className="h-min text-xl font-bold">{legend}</h3>
-        <MyModal title="About">
+        <MyInformModal title="About" size="3xl">
           {/* Introduce what is the Abalone Dataset About, additional inf is in https://archive.ics.uci.edu/dataset/1/abalone */}
           <p className="text-lg">
-            You can adjust the color threshold by simply dragging the slider.
+            Use the Ranking Window Slider to scroll through different sets of 20
+            indexes.
             <br />
             <br />
-            Utilizing this feature, you can readily discern the visual
-            distinctions and similarities among the three abalone types.
+            Simply drag the slider handle left or right to seamlessly view
+            additional schools. This ensures a clear and focused view on a
+            manageable number of rankings at once, enhancing your analysis
+            experience.
           </p>
-        </MyModal>
+        </MyInformModal>
       </span>
       <input
         type="range"
@@ -45,7 +48,7 @@ const MySlider: React.FC<IProps> = ({
         max={max * precision}
         list="tickmarks"
         value={(value * precision).toString()}
-        className=" w-full accent-red-500"
+        className=" w-full accent-slate-500"
         onChange={(e) => setValue(parseInt(e.target.value) / precision)}
         disabled={disable}
       />
