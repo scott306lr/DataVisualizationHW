@@ -39,13 +39,15 @@ function App() {
     data: data,
     error: error,
     isLoading: isLoading,
-  } = useSWR("ma_lga_12345.csv", HousePropertySalesFetcher);
+  } = useSWR(
+    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/ma_lga_12345.csv",
+    HousePropertySalesFetcher,
+  );
 
   const [aggregateBy, setAggregateBy] = useState("Month");
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const restartRef = useRef<RestartHandle>(null);
-  console.log(data && data);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-blue-100">

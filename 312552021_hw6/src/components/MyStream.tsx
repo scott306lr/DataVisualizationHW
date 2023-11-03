@@ -197,7 +197,6 @@ const MyStream = forwardRef<
                 const newArray = [...keyArray];
                 const temp = newArray[index];
 
-                console.log(index);
                 if (deleteMode) {
                   // remove the id
                   newArray.splice(index, 1);
