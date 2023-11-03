@@ -1,20 +1,15 @@
 // import { useState } from "react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import "./App.css";
-import { UniversityRankingFetcher } from "./utils/dataHandler";
+import { HousePropertySalesFetcher } from "./utils/dataHandler";
 import useSWR from "swr";
 
-import MyBar from "./components/MyBar";
 import { MyInformModal } from "./components/MyInformModal";
 
-import {
-  BsSortDownAlt,
-  BsSortDown,
-  BsFillUnlockFill,
-  BsFillLockFill,
-} from "react-icons/bs";
 import { Button, Tooltip } from "flowbite-react";
 import MyModal from "./components/MyModal";
+import MyStream, { RestartHandle } from "./components/MyStream";
+import { MdRestartAlt, MdDelete, MdOutlineArrowUpward } from "react-icons/md";
 
 //create component, don't render the passed component if isLoading or error
 const CheckBeforeRender: React.FC<{
@@ -44,90 +39,103 @@ function App() {
     data: data,
     error: error,
     isLoading: isLoading,
-  } = useSWR(
-    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/TIMES_WorldUniversityRankings_2024.csv",
-    UniversityRankingFetcher,
-  );
+  } = useSWR("ma_lga_12345.csv", HousePropertySalesFetcher);
 
-  const [sortingOrder, setSortingOrder] = useState("Descend");
+  const [aggregateBy, setAggregateBy] = useState("Month");
   const [openModal, setOpenModal] = useState<string | undefined>(undefined);
-  const [staticRange, setStaticRange] = useState(true);
+  const [deleteMode, setDeleteMode] = useState<boolean>(false);
+  const restartRef = useRef<RestartHandle>(null);
+  console.log(data && data);
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-blue-100">
+    <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-blue-100">
       <div className="invisible"></div>
       <CheckBeforeRender isLoading={isLoading} error={error}>
         {data && (
-          <div className="h-[50rem] w-[90rem] flex-col place-items-center space-y-2 pb-20">
+          <div className="h-[45rem] w-[90rem] flex-col place-items-center space-y-2 pb-32">
             <div className="grid w-full grid-cols-3 items-center justify-center rounded-xl bg-slate-700 p-4">
               <div className="col-start-1 flex flex-grow items-center justify-start space-x-2 pl-6">
                 <Tooltip
                   style="light"
-                  content="Switch between Dynamic/Static Scaling"
+                  content="Restart Graph"
+                  arrow={false}
+                  className="text-xl"
+                >
+                  <Button
+                    // gradientMonochrome="purple"
+                    gradientDuoTone="cyanToBlue"
+                    className="h-14 w-14 items-center justify-center"
+                    onClick={() => {
+                      restartRef.current?.restart();
+                      setAggregateBy("Month");
+                    }}
+                  >
+                    <MdRestartAlt className="h-12 w-12 p-2" />
+                  </Button>
+                </Tooltip>
+                <Tooltip
+                  style="light"
+                  content="View Stream Graph by Month/Year"
                   arrow={false}
                   className="text-xl"
                 >
                   <Button
                     // gradientDuoTone="cyanToBlue"
                     color="gray"
-                    className="h-14 w-14 items-center justify-center "
+                    className="h-14 w-14 items-center justify-center text-center font-bold "
                     onClick={() =>
-                      setStaticRange(staticRange === true ? false : true)
+                      setAggregateBy(aggregateBy === "Month" ? "Year" : "Month")
                     }
                   >
-                    {staticRange === true ? (
-                      <BsFillLockFill className="h-12 w-12 p-2" />
+                    {aggregateBy === "Month" ? (
+                      <span className="text-2xl"> M </span>
                     ) : (
-                      <BsFillUnlockFill className="h-12 w-12 p-2" />
+                      <span className="text-2xl"> Y </span>
                     )}
                   </Button>
                 </Tooltip>
                 <Tooltip
                   style="light"
-                  content="Switch between Descending/Ascending Order"
+                  content="Shift Up/Delete Legends On Click"
                   arrow={false}
                   className="text-xl"
                 >
                   <Button
                     // gradientDuoTone="cyanToBlue"
-                    color="gray"
-                    className="h-14 w-14 items-center justify-center "
-                    onClick={() =>
-                      setSortingOrder(
-                        sortingOrder === "Ascend" ? "Descend" : "Ascend",
-                      )
-                    }
+                    color={deleteMode ? "failure" : "warning"}
+                    className="h-14 w-14 items-center justify-center text-center font-bold "
+                    onClick={() => setDeleteMode((prev) => !prev)}
                   >
-                    {sortingOrder === "Ascend" ? (
-                      <BsSortDownAlt className="h-12 w-12 p-2" />
+                    {deleteMode ? (
+                      <MdDelete className="h-12 w-12 p-2" />
                     ) : (
-                      <BsSortDown className="h-12 w-12 p-2" />
+                      <MdOutlineArrowUpward className="h-12 w-12 p-2" />
                     )}
                   </Button>
                 </Tooltip>
               </div>
               <h1 className="col-start-2 flex items-center justify-center text-center text-3xl font-bold text-white">
-                World University Rankings
-                <MyInformModal title="World University Rankings">
+                House Property Sales
+                <br />
+                Time Series
+                <MyInformModal
+                  title="House Property Sales Time Series"
+                  size="xl"
+                >
                   <div className="flex flex-col items-center justify-center">
                     <p className="text-center text-lg">
                       The{" "}
                       <a
-                        href="https://www.kaggle.com/datasets/ddosad/timesworlduniversityrankings2024"
+                        href="https://www.kaggle.com/datasets/htagholdings/property-sales/"
                         target="_blank"
                         className="font-bold text-blue-500 underline hover:text-blue-700"
                       >
-                        Times Higher Education World University Rankings 2024
+                        House Property Sales Time Series
                       </a>{" "}
-                      dataset include{" "}
-                      <strong>
-                        1,904 universities across 108 countries and regions.
-                      </strong>{" "}
-                      The table is based on their new WUR 3.0 methodology, which
-                      includes 18 carefully calibrated performance indicators
-                      that measure an institution’s performance across five
-                      areas: teaching, research environment, research quality,
-                      industry, and international outlook.
+                      accumulated property sales data for the{" "}
+                      <strong>2007-2019 period for one specific region.</strong>{" "}
+                      The data contains sales prices for houses and units with
+                      1~5 bedrooms.
                     </p>
                   </div>
                 </MyInformModal>
@@ -145,10 +153,11 @@ function App() {
                 </h1>
               </div>
             </div>
-            <MyBar
+            <MyStream
+              ref={restartRef}
               data={data}
-              sortOrder={sortingOrder}
-              staticRange={staticRange}
+              aggregateBy={aggregateBy}
+              deleteMode={deleteMode}
             />
           </div>
         )}
@@ -161,7 +170,7 @@ function App() {
       >
         <div className="flex h-full w-full flex-col items-center justify-center">
           <img
-            src="https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/howToUse.png"
+            src="https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/howToUseStream.png"
             alt="how to use"
             width={1920}
             height={1080}
