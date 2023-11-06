@@ -77,7 +77,7 @@ function App() {
     error: error,
     isLoading: isLoading,
   } = useSWR(
-    "http://vis.lab.djosix.com:2023/data/air-pollution.csv",
+    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/air-pollution.csv",
     SeoulAirPollutionFetcher,
   );
 
