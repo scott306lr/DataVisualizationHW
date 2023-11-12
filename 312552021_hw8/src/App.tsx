@@ -41,24 +41,6 @@ export const HowToUse: React.FC<IProps> = ({
   );
 };
 
-const Card = ({ item }: { item: string }) => {
-  let bg_color = "white";
-  if (item === "buying") bg_color = "#D3DCEC";
-  if (item === "maint") bg_color = "#E4DBEF";
-  if (item === "doors") bg_color = "#F7F0DB";
-  if (item === "persons") bg_color = "#E8EEDB";
-  if (item === "lug_boot") bg_color = "#E7C8EA";
-  if (item === "safety") bg_color = "#ECCAC8";
-  return (
-    <div
-      className="m-2 flex flex-col items-center justify-center rounded-xl border-2 border-gray-500 p-2"
-      style={{ color: "black", backgroundColor: bg_color }}
-    >
-      <div className="text-xl">{item}</div>
-    </div>
-  );
-};
-
 //create component, don't render the passed component if isLoading or error
 const CheckBeforeRender: React.FC<{
   isLoading: boolean;
@@ -80,6 +62,24 @@ const CheckBeforeRender: React.FC<{
     );
 
   return <>{children}</>;
+};
+
+const Card = ({ item }: { item: string }) => {
+  let bg_color = "white";
+  if (item === "buying") bg_color = "#D3DCEC";
+  if (item === "maint") bg_color = "#E4DBEF";
+  if (item === "doors") bg_color = "#F7F0DB";
+  if (item === "persons") bg_color = "#E8EEDB";
+  if (item === "lug_boot") bg_color = "#E7C8EA";
+  if (item === "safety") bg_color = "#ECCAC8";
+  return (
+    <div
+      className="m-2 flex flex-col items-center justify-center rounded-xl border-2 border-gray-500 p-2 shadow-black drop-shadow-lg"
+      style={{ color: "black", backgroundColor: bg_color }}
+    >
+      <div className="text-xl">{item}</div>
+    </div>
+  );
 };
 
 function App() {
@@ -107,14 +107,14 @@ function App() {
       <CheckBeforeRender isLoading={isLoading} error={error}>
         {data && (
           <div className="h-[50rem] w-[100rem] flex-col place-items-center space-y-2 pb-32">
-            <div className="grid w-full grid-cols-5 items-center rounded-xl bg-slate-700 p-4">
+            <div className="grid w-full grid-cols-5 items-center rounded-xl bg-slate-700 p-4 shadow-md shadow-gray-800">
               <h1 className="col-start-1 flex items-center justify-center text-left text-3xl font-bold text-white">
                 Car Evaluation
                 <br />
                 Dataset
               </h1>
               <div className="col-start-2 flex w-[38.6rem] flex-grow items-center justify-start space-x-2 ">
-                <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-gray-500 bg-gray-100 text-center font-bold">
+                <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-gray-500 bg-gray-100 text-center font-bold shadow-inner shadow-black">
                   <DnDList items={keyOrder} setItems={setKeyOrder}>
                     <Card item={""} />
                   </DnDList>

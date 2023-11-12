@@ -154,7 +154,7 @@ const MySankeyChart: React.FC<{
   };
 
   return (
-    <div className="flex h-full w-full flex-col justify-center rounded-xl border-2 border-gray-500 bg-white">
+    <div className="flex h-full w-full flex-col justify-center rounded-xl border-2 border-gray-500 bg-white shadow-md shadow-gray-400">
       <Sankey
         {...config}
         data={sankeyData}
