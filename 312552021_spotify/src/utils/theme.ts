@@ -5,18 +5,18 @@ export const customTabTheme: CustomFlowbiteTheme = {
     tab: {
       tablist: {
         //space 
-        base: "flex text-center justify-around pr-12 pl-4",
+        base: "flex w-full text-center justify-center items-center gap-2",
         styles: {
           default: "flex-wrap border-b border-gray-200 dark:border-gray-700",
           underline:
             "flex-wrap -mb-px border-b border-gray-200 dark:border-gray-700",
           pills:
-            "flex-wrap font-medium text-sm text-gray-500 dark:text-gray-400 space-x-2",
+            "flex-wrap font-medium text-sm text-gray-500 dark:text-gray-400 space-x-1",
           fullWidth:
             "w-full text-xl font-medium divide-x divide-gray-200 shadow grid grid-flow-col dark:divide-gray-700 dark:text-gray-400 rounded-none",
         },
         tabitem: {
-          base: "flex items-center justify-center p-4 rounded-t-lg text-xl font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500, focus:outline-none", //focus:ring-2 focus:ring-cyan-300 focus:outline-none"
+          base: "flex w-[8rem] items-center justify-center p-2 rounded-t-lg text-lg font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500, focus:outline-none", //focus:ring-2 focus:ring-cyan-300 focus:outline-none"
           styles: {
             default: {
               base: "rounded-t-lg",
@@ -35,8 +35,8 @@ export const customTabTheme: CustomFlowbiteTheme = {
             pills: {
               base: "",
               active: {
-                on: "rounded-lg bg-cyan-600 text-white",
-                off: "rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white",
+                on: "rounded-lg bg-cyan-600 text-white border-transparent active dark:bg-cyan-500 dark:text-white dark:border-transparent",
+                off: "rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white border-2 border-gray-200 dark:border-gray-700 dark:text-gray-400",
               },
             },
             fullWidth: {
@@ -51,7 +51,7 @@ export const customTabTheme: CustomFlowbiteTheme = {
         },
       },
       tabitemcontainer: {
-        base: "flex flex-col gap-2 justify-center items-center",
+        base: "flex flex-col w-full gap-2 justify-center items-center",
         styles: {
           default: "",
           underline: "",

@@ -1,42 +1,92 @@
 // import { useState } from "react";
-import { ReactNode, Suspense, useState } from "react";
+import { ReactNode, Suspense, useEffect, useState } from "react";
 import "./App.css";
-import { CarEvaluationFetcher } from "./utils/dataHandler";
+import {
+  Collection,
+  SpotifyData,
+  SpotifyDataFetcher,
+} from "./utils/dataHandler";
 import useSWR from "swr";
 
-import MyModal from "./components/MyModal";
-import DnDList from "./components/DNDList";
+import GroupBuilder from "./components/GroupBuilder";
+import TrackKeys from "./components/TrackKeys";
+import TrackScores from "./components/TrackScores";
+import TrackFilter from "./components/TrackFilter";
+import TopTracks from "./components/TrackTops";
+import { Tooltip } from "flowbite-react";
+import TrackExplicit from "./components/TrackExplicit";
+import { PiMetronome, PiTimer, PiTrashFill } from "react-icons/pi";
+import PopularBoxPlot from "./components/boxplots/PopularBoxPlot";
+import DurationBoxPlot from "./components/boxplots/DurationBoxPlot";
 
-interface IProps {
-  title: string | undefined;
-  children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | undefined;
-}
+//create component, don't render the passed component if isLoading or error
+const GroupProfile: React.FC<{
+  data: SpotifyData[];
+  orgData: SpotifyData[];
+}> = ({ data, orgData }) => {
+  // const [range, setRange] = useState<number[]>([0, 100]);
+  const [filteredData, setFilteredData] = useState<SpotifyData[]>([]);
 
-export const HowToUse: React.FC<IProps> = ({
-  title,
-  size = "2xl",
-  children,
-}) => {
-  const [openModal, setOpenModal] = useState<string | undefined>(undefined);
+  const durData = filteredData.map((track) => ({
+    group: "duration",
+    value: track.duration_s,
+  }));
+
+  const tempoData = filteredData.map((track) => ({
+    group: "tempo",
+    value: track.tempo,
+  }));
 
   return (
-    <>
-      <h1
-        className="cursor-pointer text-center text-2xl font-bold text-white/80 hover:text-white"
-        onClick={() => setOpenModal("dismissible")}
-      >
-        How To Use ?
-      </h1>
-      <MyModal
-        title={title}
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        size={size}
-      >
-        {children}
-      </MyModal>
-    </>
+    <div className="flex h-[48rem] w-[110rem] flex-col items-center justify-center rounded-b-xl rounded-tr-3xl border-4 border-[#274c77] bg-white p-4 shadow-md shadow-gray-800">
+      <div className="flex h-full w-full items-center justify-center   bg-white">
+        <div className="flex h-full w-[26rem] items-center justify-center justify-self-center">
+          <TopTracks data={filteredData} />
+        </div>
+
+        <div className="flex h-full w-min flex-col items-center justify-center border-x-2 bg-white">
+          <div className="flex h-min w-min items-center justify-center p-4">
+            <TrackKeys data={filteredData} />
+          </div>
+          <div className="flex h-full w-full flex-col justify-evenly border-t-2  p-4">
+            <div className="flex h-min w-full flex-col justify-center gap-2">
+              <h1 className="flex items-center gap-2 text-2xl font-bold text-[#274c77]">
+                <PiMetronome className="h-8 w-8" />
+                Tempo (BPM)
+              </h1>
+              <div className="flex h-[6rem] w-full items-center justify-center">
+                <PopularBoxPlot data={tempoData} colors={["#2a9d8f"]} />
+              </div>
+            </div>
+            <div className="flex h-min w-full flex-col justify-center gap-2">
+              <h1 className="flex items-center gap-2 text-2xl font-bold text-[#274c77]">
+                <PiTimer className="h-8 w-8" />
+                Duration
+              </h1>
+              <div className="flex h-[6rem] w-full items-center justify-center">
+                <DurationBoxPlot data={durData} colors={["#e9c46a"]} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center p-4">
+            <TrackFilter
+              data={data}
+              filteredData={filteredData}
+              setFilteredData={setFilteredData}
+            />
+          </div>
+
+          <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-4 border-t-2 p-4">
+            <div className="col-start-3 row-span-2 row-start-1 flex h-full items-center justify-center">
+              <TrackExplicit data={filteredData} />
+            </div>
+            <TrackScores data={filteredData} orgData={orgData} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -46,13 +96,6 @@ const CheckBeforeRender: React.FC<{
   error: string | null;
   children: ReactNode;
 }> = ({ isLoading, error, children }) => {
-  if (isLoading)
-    return (
-      <div className="grid h-screen w-screen place-items-center text-4xl">
-        <h1>Loading...</h1>
-      </div>
-    );
-
   if (error)
     return (
       <div className="grid h-screen w-screen place-items-center text-4xl">
@@ -60,25 +103,14 @@ const CheckBeforeRender: React.FC<{
       </div>
     );
 
-  return <>{children}</>;
-};
+  if (isLoading)
+    return (
+      <div className="grid h-screen w-screen place-items-center text-4xl">
+        <h1>Loading...</h1>
+      </div>
+    );
 
-const Card = ({ item }: { item?: string }) => {
-  let bg_color = "white";
-  if (item === "buying") bg_color = "#D3DCEC";
-  if (item === "maint") bg_color = "#E4DBEF";
-  if (item === "doors") bg_color = "#F7F0DB";
-  if (item === "persons") bg_color = "#E8EEDB";
-  if (item === "lug_boot") bg_color = "#E7C8EA";
-  if (item === "safety") bg_color = "#ECCAC8";
-  return (
-    <div
-      className="m-2 flex flex-col items-center justify-center rounded-xl border-2 border-gray-500 p-2 shadow-black drop-shadow-lg"
-      style={{ color: "black", backgroundColor: bg_color }}
-    >
-      <div className="text-xl">{item}</div>
-    </div>
-  );
+  return <>{children}</>;
 };
 
 function App() {
@@ -86,76 +118,157 @@ function App() {
     data: data,
     error: error,
     isLoading: isLoading,
-  } = useSWR(
-    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/car.data",
-    CarEvaluationFetcher,
+  } = useSWR<SpotifyData[]>(
+    "https://raw.githubusercontent.com/scott306lr/DataVisualizationHW/main/public/spotify_dataset.csv",
+    SpotifyDataFetcher,
+    {
+      revalidateOnFocus: false,
+    },
   );
+  const [groups, setGroups] = useState<Collection[]>([]);
+  const [selectedId, setSelectedId] = useState<string>();
+  // const [selected, setSelected] = useState<Collection>();
+  //get group by id
+  const selected = groups.find((group) => group.id === selectedId);
+  useEffect(() => {
+    if (!data) return;
+    if (groups.length !== 0) {
+      // setSelected(groups[groups.length - 1]);
+      setSelectedId(groups[groups.length - 1].id);
+    }
+  }, [data, groups]);
 
-  const [keyOrder, setKeyOrder] = useState<string[]>([
-    "buying",
-    "maint",
-    "doors",
-    "persons",
-    "lug_boot",
-    "safety",
-  ]);
+  useEffect(() => {
+    if (!data) return;
+
+    if (groups.length === 0) {
+      //datas with unique data id
+      const uniqueDataMap = new Map<string, SpotifyData>();
+      const uniqueData = new Array<SpotifyData>();
+      data.forEach((d) => {
+        if (!uniqueDataMap.has(d.track_id)) {
+          uniqueDataMap.set(d.track_id, d);
+          uniqueData.push(d);
+        }
+      });
+
+      setGroups([
+        {
+          id: "All Tracks",
+          name: "All Tracks",
+          data: uniqueData,
+        },
+        {
+          id: "Mandopop",
+          name: "Mandopop",
+          data: uniqueData.filter((d) => d.track_genre === "mandopop"),
+        },
+        {
+          id: "Pop",
+          name: "Pop",
+          data: uniqueData.filter((d) => d.track_genre === "pop"),
+        },
+        {
+          id: "Jay Chou",
+          name: "Jay Chou",
+          data: uniqueData.filter((d) => d.artists.includes("Jay Chou")),
+        },
+        {
+          id: "Billie Eilish",
+          name: "Billie Eilish",
+          data: uniqueData.filter((d) => d.artists.includes("Billie Eilish")),
+        },
+        {
+          id: "Yoasobi",
+          name: "Yoasobi",
+          data: uniqueData.filter((d) => d.artists.includes("YOASOBI")),
+        },
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-blue-100">
+    <div className="flex h-screen w-screen items-center justify-center bg-[#a3cef1]">
       <div className="invisible"></div>
-      <CheckBeforeRender isLoading={isLoading} error={error}>
-        {data && (
-          <div className="h-[50rem] w-[100rem] flex-col place-items-center space-y-2 pb-32">
-            <div className="grid w-full grid-cols-5 items-center rounded-xl bg-slate-700 p-4 shadow-md shadow-gray-800">
-              <h1 className="col-start-1 flex items-center justify-center text-left text-3xl font-bold text-white">
-                Car Evaluation
-                <br />
-                Dataset
-              </h1>
-              <div className="col-start-2 flex w-[38.6rem] flex-grow items-center justify-start space-x-2 ">
-                <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-gray-500 bg-gray-100 text-center font-bold shadow-inner shadow-black">
-                  <DnDList items={keyOrder} setItems={setKeyOrder}>
-                    <Card />
-                  </DnDList>
-                </div>
-                <h1 className="items-center justify-center whitespace-nowrap pl-2 text-left text-xl font-bold text-white">
-                  Drag to
-                  <br />
-                  Reorder
-                </h1>
-              </div>
-              <div className="col-start-5 flex flex-grow justify-end pr-6">
-                <HowToUse title="How To Use ?" size="xl">
-                  <div className="flex h-full w-full flex-col items-center justify-center">
-                    <p className="text-left text-xl">
-                      <span className="">
-                        To dive deeper and customize your view...
-                      </span>
+      <div className="flex h-full w-full items-center justify-center">
+        <CheckBeforeRender isLoading={isLoading && !selected} error={error}>
+          {data && selected && (
+            <div className="flex h-min w-min flex-col">
+              <Suspense fallback={<div>Loading...</div>}>
+                <ul className="flex h-[8rem] w-full items-end gap-2 pr-1 pt-2">
+                  <li className="mr-4 flex h-min w-[14rem] items-center justify-center rounded-tl-lg rounded-tr-3xl bg-[#274c77] px-8 py-4 shadow-md shadow-gray-800">
+                    <h1 className="text-left text-2xl font-bold text-[#e7ecef] drop-shadow-md">
+                      <span className="text-4xl">S</span>
+                      potify
+                      <span className="text-4xl"> 🎵</span>
                       <br />
-                      <br />
-                      <ul>
-                        <li className="ml-4 list-disc">
-                          Drag the blocks on the topbar to change the order of
-                          the chart.
-                        </li>
-                        <li className="ml-4 list-disc">
-                          Drag and rearrange the Sankey nodes to declutter the
-                          view.
-                        </li>
-                      </ul>
-                    </p>
-                  </div>
-                </HowToUse>
-              </div>
-            </div>
-            <Suspense fallback={<div>Loading...</div>}>
-              <div>hello</div>
-            </Suspense>
-          </div>
-        )}
-      </CheckBeforeRender>
+                      <span className="text-4xl">T</span>
+                      <span className="text-3xl">rackalysis</span>
+                    </h1>
+                  </li>
 
-      <footer className="fixed bottom-0 right-0 m-2">
+                  {groups.map((group) => {
+                    if (group.id === selected.id) {
+                      return (
+                        <li
+                          key={group.id}
+                          className="relative flex h-[4rem] w-[10rem] items-center justify-center rounded-t-2xl border-4 border-[#274c77] bg-white px-1 pt-1 shadow-md shadow-gray-800"
+                        >
+                          <Tooltip content={group.name}>
+                            <h1 className="line-clamp-1 px-1 text-2xl font-bold text-[#274c77]">
+                              {group.name}
+                            </h1>
+                          </Tooltip>
+                          <div className="absolute top-[3rem] z-10 h-[2rem] w-[9.5rem] bg-white" />
+                          {group.id !== "All Tracks" && (
+                            <PiTrashFill
+                              className="absolute right-0 top-12 z-10 h-8 w-8 text-[#274c77] hover:cursor-pointer hover:text-[#8d0801]"
+                              onClick={() => {
+                                setGroups(
+                                  groups.filter((g) => g.id !== group.id),
+                                );
+                                setSelectedId("All Tracks");
+                              }}
+                            />
+                          )}
+                        </li>
+                      );
+                    }
+                    return (
+                      <li
+                        key={group.id}
+                        className="flex h-[4rem] w-[10rem] items-center justify-center rounded-t-2xl border-4 border-white bg-white px-1 pt-1 shadow-md shadow-gray-800 hover:cursor-pointer hover:border-transparent hover:bg-gray-300"
+                        onClick={() => {
+                          setSelectedId(group.id);
+                          console.log(group.id);
+                        }}
+                      >
+                        <Tooltip content={group.name}>
+                          <h1 className="line-clamp-1 px-1 text-2xl font-bold text-gray-800">
+                            {group.name}
+                          </h1>
+                        </Tooltip>
+                      </li>
+                    );
+                  })}
+                  {groups.length < 9 && (
+                    <GroupBuilder
+                      data={data}
+                      groups={groups}
+                      setGroups={setGroups}
+                    ></GroupBuilder>
+                  )}
+                </ul>
+
+                <GroupProfile data={selected.data} orgData={data} />
+              </Suspense>
+            </div>
+          )}
+        </CheckBeforeRender>
+      </div>
+
+      <footer className="fixed right-0 top-0 m-2">
         <p>Built by 312552021</p>
       </footer>
     </div>

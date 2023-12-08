@@ -20,7 +20,7 @@ export const SetActiveTabProgrammatically: React.FC<IProps> = ({
   return (
     <>
       <Flowbite theme={{ theme: customTabTheme }}>
-        <Tabs.Group
+        <Tabs
           aria-label="Default tabs"
           style="fullWidth"
           ref={props.tabsRef}
@@ -65,7 +65,7 @@ export const SetActiveTabProgrammatically: React.FC<IProps> = ({
           <Tabs.Item disabled title="Disabled">
             Disabled content
           </Tabs.Item>
-        </Tabs.Group>
+        </Tabs>
       </Flowbite>
       {/* <div className="pb-4 pt-2 text-sm text-gray-500 dark:text-gray-400">
         Active tab: {props.activeTab}

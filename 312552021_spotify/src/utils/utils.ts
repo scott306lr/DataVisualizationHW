@@ -70,6 +70,57 @@ export const parseDate = (str: string) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const dataUniqueKeyValue = (data: any[], key: string | number) => {
-  const values = data.map(d => d[key]);
+  const values = data.map(d => d[key]).flat();
   return [...new Set(values)];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const dataUniqueKeyValueCount = (data: any[], key: string | number) => {
+  const frequencyMap = new Map();
+
+  // Compute the frequency of each key
+  data.forEach(item => {
+    const itemValue = item[key];
+    if (Array.isArray(itemValue)) {
+      itemValue.forEach(value => {
+        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+      });
+    } else {
+      frequencyMap.set(itemValue, (frequencyMap.get(itemValue) || 0) + 1);
+    }
+  });
+
+  // Convert the frequency map to the desired format
+  return Array.from(frequencyMap, ([key, value]) => ({ key, value }));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const dataKeyAverage = (data: any[], key: string) => {
+  const values = data.map(d => d[key]) as number[];
+  return values.reduce((a, b) => a + b) / values.length;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const dataKeyMeanStd = (data: any[], key: string) => {
+  const mean = dataKeyAverage(data, key);
+  const std = Math.sqrt(data.map(d => (d[key] - mean) ** 2).reduce((a, b) => a + b) / data.length);
+  return [mean, std];
+}
+
+const pad = (num: number, size: number) => {
+  const s = "000000000" + num;
+  return s.slice(-size);
+}
+export const formatTime = (sec: number) => {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec - h * 3600) / 60);
+  const s = Math.floor(sec - h * 3600 - m * 60);
+
+  return h > 0
+    ? `${h}:${pad(m, 2)}:${pad(s, 2)}`
+    : `${pad(m, 2)}:${pad(s, 2)}`;
+};
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

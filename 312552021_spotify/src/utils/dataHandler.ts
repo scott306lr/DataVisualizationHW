@@ -2,35 +2,35 @@ import Papa from "papaparse";
 import { correlations } from "./utils";
 
 export type Collection = {
-  id: number;
+  id: string;
   name: string;
   data: SpotifyData[];
-  color: [number, number, number];
 };
 
 // typescript type for Spotify Music Data
 export type SpotifyData = {
   id: string;
   track_id: string;
+  track_name: string;
+  duration_s: number;
   artists: string[];
   album_name: string;
-  track_name: string;
+  track_genre: string;
   popularity: number;
-  duration_s: number;
+  key: string;
+  mode: string;
+  key_mode: string;
+  time_signature: number;
+  tempo: number;
   explicit: boolean;
   danceability: number;
   energy: number;
-  key: string;
   loudness: number;
-  mode: string;
   speechiness: number;
   acousticness: number;
   instrumentalness: number;
   liveness: number;
   valence: number;
-  tempo: number;
-  time_signature: number;
-  track_genre: string;
   [key: string]: boolean | number | string | string[] | undefined;
 };
 
@@ -297,8 +297,7 @@ export const SpotifyDataFetcher = async (url: string) => {
           };
         }) as SpotifyData[],
       )
-      .then((data) => { // additional processing
-        //key_mode
+      .then((data) => { // merge key and mode to one column
         const key_mode = data.map((d) => d.key + "_" + d.mode);
         return data.map((d, i) => {
           return {
@@ -307,6 +306,11 @@ export const SpotifyDataFetcher = async (url: string) => {
           };
         });
       })
+      .then((data) => data.filter((row) => row.track_id && row.track_name ))
+      // .then((data) => { // remove identical data, with same
+      //   const unique = new Set(data.map((d) => d.track_id));
+      //   return data.filter((d) => unique.has(d.track_id));
+      // })
       .catch((error) => {
         // console.log(error);
         return error
